@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metabase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metabase
+  template:
+    metadata:
+      labels:
+        app: metabase
+    spec:
+      containers:
+        - name: metabase
+          image: metabase/metabase@sha256:96416c11371d400aecc2073b8d0e8335cc7c413b236ef724e51dda095b2580ea
+          env:
+            - name: MB_DB_TYPE
+              value: "postgres"
+            - name: MB_DB_HOST
+              value: "postgres"
+            - name: MB_DB_PORT
+              value: "5432"
+            - name: MB_DB_USER
+              value: "${POSTGRES_USER}"
+            - name: MB_DB_PASS
+              value: "${POSTGRES_PASSWORD}"
+            - name: MB_DB_DBNAME
+              value: "${POSTGRES_DB}"
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5

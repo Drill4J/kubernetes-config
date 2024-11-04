@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drill-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drill-ui
+  template:
+    metadata:
+      labels:
+        app: drill-ui
+    spec:
+      containers:
+        - name: drill-ui
+          image: ghcr.io/drill4j/drill4j-ui:${DRILL_UI_VERSION}
+          env:
+            - name: API_HOST
+              value: "host.docker.internal"
+            - name: API_PORT
+              value: "8090"
+          ports:
+            - containerPort: 8080
