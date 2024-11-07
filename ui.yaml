@@ -38,4 +38,3 @@ spec:
   ports:
     - port: 8091        # Expose port 8091 externally on the node
       targetPort: 8080   # Forward traffic to port 8080 inside the container
-      nodePort: 30091    # Expose port 30091 externally (can be any valid port between 30000-32767)

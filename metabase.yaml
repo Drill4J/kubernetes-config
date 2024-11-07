@@ -59,4 +59,3 @@ spec:
   ports:
     - port: 8095
       targetPort: 3000
-      nodePort: 30095

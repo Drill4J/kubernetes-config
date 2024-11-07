@@ -92,4 +92,3 @@ spec:
   ports:
     - port: 8090
       targetPort: 8090
-      nodePort: 30090
