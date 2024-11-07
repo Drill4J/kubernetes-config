@@ -34,6 +34,8 @@ In this case config refers to any sort of resource definition within Kubernetes 
 
 ## Install PostgreSQL to cluster
 
+https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+
 ```shell
     helm install my-postgres bitnami/postgresql --set postgresqlVersion=17 \
     --set global.postgresql.auth.postgresPassword=mysecretpassword \
