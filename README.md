@@ -1,6 +1,6 @@
 # Drill4J Kubernetes Configuration
 
-1. helm install postgres
+1. helm install postgres (see [DEVELOPMENT.md](./DEVELOPMENT.md))
 2. apply config-map.yml
 3. apply admin.yml
 4. apply ui.yml
