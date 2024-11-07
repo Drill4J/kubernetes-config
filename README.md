@@ -54,3 +54,20 @@
 	- update General/ Site Url to actual value of your host (thats for UI)
 
 10. Update `DRILL_UI_BASE_URL` in config-map.yml to value to Drill UI host and restart `admin` deployment (that is required for admin to provide correct links in metrics reports)
+
+11. Enable Ingress addon
+
+	```shell
+		minikube addons enable ingress
+	```
+
+12. Configure ingress
+
+	```shell
+		kubectl apply -f ./ingress.yaml
+
+		# use <minikube-ip>/path (see igress config for paths) to access ui, admin api and metabase
+		# you might not be able to immediately access it when running in minikube since it is availbe from within minikube container
+		# but not from host machine   
+		minikube ip 
+	```
