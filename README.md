@@ -51,7 +51,8 @@
 
 9. In Metabase UI navigate to admin settings (top right corner, gear icon, admin settings) and
 	- update Databases/ Drill4J_PostgreSQL_DB host value to `my-postgres-postgresql.default.svc.cluster.local`
-	- update General/ Site Url to actual value of your host (thats for UI)
+	- update General/ Site Url to actual value `http://host:port/path` 
+	> REMEMBER to include /path configured in ingress (e.g. `/metabase`), otherwise Metabase frontend will try to fetch static resources on root path
 
 10. Update `DRILL_UI_BASE_URL` in config-map.yml to value to Drill UI host and restart `admin` deployment (that is required for admin to provide correct links in metrics reports)
 
