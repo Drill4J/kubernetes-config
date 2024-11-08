@@ -64,10 +64,13 @@
 12. Configure ingress
 
 	```shell
-		kubectl apply -f ./ingress.yaml
+		kubectl apply -f ./ingress.yaml 
+	```
 
-		# use <minikube-ip>/path (see igress config for paths) to access ui, admin api and metabase
-		# you might not be able to immediately access it when running in minikube since it is availbe from within minikube container
-		# but not from host machine   
-		minikube ip 
+13. Run tunnel to access ingress from host machine. Now you should be able to send requests to ingress from `http://localhost`
+
+	```shell
+		# run with elevated shell (admin privileges) 
+		# keep terminal open
+		minikube tunnel
 	```
