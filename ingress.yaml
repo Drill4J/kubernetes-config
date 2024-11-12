@@ -3,27 +3,27 @@ kind: Ingress
 metadata:
   name: app-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2  
 spec:
   rules:
   - http:
       paths:
-      - path: /ui
-        pathType: Prefix
+      - path: /ui(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: drill-ui
             port:
               number: 8091
-      - path: /admin
-        pathType: Prefix
+      - path: /admin(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: drill-admin-node-port
             port:
               number: 8090
-      - path: /metabase
-        pathType: Prefix
+      - path: /metabase(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: metabase
