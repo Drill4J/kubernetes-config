@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: drill-ui
-          image: ghcr.io/drill4j/drill4j-ui:0.1.1
+          image: ghcr.io/drill4j/drill4j-ui:0.1.2
           env:
             - name: API_HOST
               valueFrom:
@@ -23,6 +23,8 @@ spec:
                   key: API_HOST
             - name: API_PORT
               value: "8090"
+            - name: BASE_PATH
+              value: "/ui"
           ports:
             - containerPort: 8080
 
