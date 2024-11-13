@@ -54,7 +54,10 @@
 	- update General/ Site Url to actual value `http://host:port/path` 
 	> REMEMBER to include /path configured in ingress (e.g. `/metabase`), otherwise Metabase frontend will try to fetch static resources on root path
 
-10. Update `DRILL_UI_BASE_URL` in config-map.yml to value to Drill UI host and restart `admin` deployment (that is required for admin to provide correct links in metrics reports)
+10. Update `DRILL_UI_BASE_URL` in config-map.yml so it would poin to Drill4J UI (`http://localhost/ui` by default)
+	- change the value in config-map.yml
+	- execute `kubectl apply -f config-map.yml`
+	- restart `admin` deployment (that is required for admin to provide correct links in metrics reports)
 
 11. Enable Ingress addon
 
@@ -68,10 +71,15 @@
 		kubectl apply -f ./ingress.yaml 
 	```
 
-13. Run tunnel to access ingress from host machine. Now you should be able to send requests to ingress from `http://localhost`
+13. Run tunnel to access ingress from host machine.
 
 	```shell
 		# run with elevated shell (admin privileges) 
 		# keep terminal open
 		minikube tunnel
 	```
+	Now you should be able to send requests to ingress from `http://localhost`. Assuming you haven't changed paths in Ingress config:  
+
+	- <http://localhost/ui> - should open Drill4J UI 
+	- <http://localhost/metabase> - should open Metabase Dashboards
+	- <http://localhost/admin> - should respond with JSON `{"message":"Drill4J Admin Backend"}`
