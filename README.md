@@ -1,85 +1,70 @@
 # Drill4J Kubernetes Configuration
 
+
 1. See [DEVELOPMENT.md](./DEVELOPMENT.md) for prerequisites and development instructions
 
-2. Install Postgres to Kubernetes cluster using Helm
-
-	```shell
-		helm install my-postgres bitnami/postgresql --set postgresqlVersion=17 \
-			--set global.postgresql.auth.postgresPassword=mysecretpassword \
-			--set global.postgresql.auth.database=postgres
-	```
-
-3. Create configuration values
-	```shell
-		kubectl apply -f ./config-map.yaml
-	```
-4. Create admin deployment and corresponding service
-	```shell
-		kubectl apply -f ./admin.yaml
-	```
-
-5. Create admin deployment and corresponding service
-	```shell
-		kubectl apply -f ./ui.yaml
-	```
-6. Execute migration to create Metabase dashboards
-
-	- download `data.sql` migration from releases https://github.com/Drill4J/drill-metabase-dashboards/releases
+2. For Minikube: make sure to launch minikube first and enable Ingress addon
 	
-	- run
-
-		```shell
-			# use minikube to tunnel temporarily to PG service
-			minikube service my-postgres-postgresql --url
-			# adjust port value according to previous command output
-			PGPASSWORD="mysecretpassword" psql -h localhost -p 63890 -U postgres -d postgres -f data.sql`
-		```	
+	```shell
+		# Launch minikube
+		minikube start
+	```
 	
-7. Create metabase and corresponding service
-
 	```shell
-		kubectl apply -f ./metabase.yaml
+		# Enable Ingress
+		minikube addons enable ingress
+	```
+	
+	```shell
+		# Launch dashboard to inspect state of containers and logs
+		minikube dashboard
 	```
 
-8. Open Metabase and Login using default credentails (login `user@user.user`, password `useruser1`)
+2. Deploy necessary components.
 
-	```shell
-		# you can once again use minikube to temporarily tunnel to Metabase service
-		minikube service metabase --url
-	```
+```shell
+# Execute commands below one by one
+# Check container logs to ensure the corresponding component is available before proceeding to the next one
+# WHY IS THIS NECESSARY: some containers are dependant on others and we don't provide Helm chart to handle that yet 
+# if necessary, edit postgres.values.yaml to change migration file to appropriate release in https://github.com/Drill4J/drill-metabase-dashboards/releases
+helm install my-postgres bitnami/postgresql -f postgres.values.yaml;
+kubectl apply -f ./config-map.yaml;
+kubectl apply -f ./admin.yaml;
+kubectl apply -f ./ui.yaml;
+kubectl apply -f ./metabase.yaml;
+kubectl apply -f ./ingress.yaml;
+```
 
-9. In Metabase UI navigate to admin settings (top right corner, gear icon, admin settings) and
-	- update Databases/ Drill4J_PostgreSQL_DB host value to `my-postgres-postgresql.default.svc.cluster.local`
-	- update General/ Site Url to actual value `http://host:port/path` 
-	> REMEMBER to include /path configured in ingress (e.g. `/metabase`), otherwise Metabase frontend will try to fetch static resources on root path
+4. You should now have PostgreSQL, Drill4J API, Drill4J UI and Metabase Dashboards running.
+	There are a few configuration steps left ahead.
 
-10. Update `DRILL_UI_BASE_URL` in config-map.yaml so it would poin to Drill4J UI (`http://localhost/ui` by default)
-	- change the value in config-map.yaml
+	Default paths configured are:  
+	- `/ui` - should open Drill4J UI 
+	- `/metabase` - should open Metabase Dashboards
+		
+		> It will take a few minutes for Metabase to start and become available
+		> 
+		> Refer to https://drill4j.github.io/docs/getting-started/metabase for usage instructions
+
+	- `/admin` - should respond with JSON `{"message":"Drill4J Admin Backend"}`
+
+	> DB is only accessible from within cluster by default. Configure additional service if needed. 
+
+3. Configure Metabase [following this instruction](./configure-metabase.md)
+
+4. Update `DRILL_UI_BASE_URL` in `config-map.yaml` to point to your host.
+	- change the value in `config-map.yaml` (e.g. `my.actual.host/ui`)
 	- execute `kubectl apply -f config-map.yaml`
 	- restart `admin` deployment (that is required for admin to provide correct links in metrics reports)
 
-11. Enable Ingress addon
+## Accessing deployed resources in Minikube
 
-	```shell
-		minikube addons enable ingress
-	```
+When running in Minikube launch tunnel:
 
-12. Configure ingress
+```shell
+	# run with elevated shell (admin privileges) 
+	# keep terminal open
+	minikube tunnel
+```
 
-	```shell
-		kubectl apply -f ./ingress.yaml 
-	```
-
-13. Run tunnel to access ingress from host machine.
-
-	```shell
-		# run with elevated shell (admin privileges) 
-		# keep terminal open
-		minikube tunnel
-	```
-	Now you should be able to send requests to ingress from `http://localhost`. Assuming you haven't changed paths in Ingress config:  
-
-	- <http://localhost/ui> - should open Drill4J UI 
-	- <http://localhost/metabase> - should open Metabase Dashboards
-	- <http://localhost/admin> - should respond with JSON `{"message":"Drill4J Admin Backend"}`
+You should be able to access <http://localhost/ui>, <http://localhost/admin>, <http://localhost/metabase>
