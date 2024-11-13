@@ -12,16 +12,16 @@
 
 3. Create configuration values
 	```shell
-		kubectl apply -f ./config-map.yml
+		kubectl apply -f ./config-map.yaml
 	```
 4. Create admin deployment and corresponding service
 	```shell
-		kubectl apply -f ./admin.yml
+		kubectl apply -f ./admin.yaml
 	```
 
 5. Create admin deployment and corresponding service
 	```shell
-		kubectl apply -f apply ./ui.yml
+		kubectl apply -f ./ui.yaml
 	```
 6. Execute migration to create Metabase dashboards
 
@@ -39,7 +39,7 @@
 7. Create metabase and corresponding service
 
 	```shell
-		kubectl apply -f ./metabase.yml
+		kubectl apply -f ./metabase.yaml
 	```
 
 8. Open Metabase and Login using default credentails (login `user@user.user`, password `useruser1`)
@@ -54,9 +54,9 @@
 	- update General/ Site Url to actual value `http://host:port/path` 
 	> REMEMBER to include /path configured in ingress (e.g. `/metabase`), otherwise Metabase frontend will try to fetch static resources on root path
 
-10. Update `DRILL_UI_BASE_URL` in config-map.yml so it would poin to Drill4J UI (`http://localhost/ui` by default)
-	- change the value in config-map.yml
-	- execute `kubectl apply -f config-map.yml`
+10. Update `DRILL_UI_BASE_URL` in config-map.yaml so it would poin to Drill4J UI (`http://localhost/ui` by default)
+	- change the value in config-map.yaml
+	- execute `kubectl apply -f config-map.yaml`
 	- restart `admin` deployment (that is required for admin to provide correct links in metrics reports)
 
 11. Enable Ingress addon
