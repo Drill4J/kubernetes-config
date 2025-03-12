@@ -26,7 +26,6 @@
 # Execute commands below one by one
 # Check container logs to ensure the corresponding component is available before proceeding to the next one
 # WHY IS THIS NECESSARY: some containers are dependant on others and we don't provide Helm chart to handle that yet 
-# if necessary, edit postgres.values.yaml to change migration file to appropriate release in https://github.com/Drill4J/drill-metabase-dashboards/releases
 helm install my-postgres bitnami/postgresql -f postgres.values.yaml;
 kubectl apply -f ./config-map.yaml;
 kubectl apply -f ./admin.yaml;
