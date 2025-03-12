@@ -1,0 +1,120 @@
+config:
+  # API_HOST: "drill-admin-cluster-ip.default.svc.cluster.local"
+  API_HOST: "drill-admin.default.svc.cluster.local"
+  POSTGRES_DB_HOST: "my-postgres-postgresql.default.svc.cluster.local"
+  POSTGRES_DB: "postgres"
+  DRILL_ADMIN_BACKEND_DB_MAX_POOL_SIZE: "50"
+  DRILL_UI_BASE_URL: "http://localhost:8095"
+  DRILL_SCHEDULER_REFRESH_VIEWS_INTERVAL_IN_MINUTES: "1"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "mysecretpassword"
+
+deployments:
+  drill-admin:
+    name: drill-admin
+    replicaCount: 1
+    image:
+      repository: ghcr.io/drill4j/admin
+      tag: "0.9.10"
+    env:
+      - name: DRILL_METRICS_UI_BASE_URL
+        value: {{ .Values.config.DRILL_UI_BASE_URL }}
+      - name: DRILL_DB_PORT
+        value: "5432"
+      - name: DRILL_AGENTS_SOCKET_TIMEOUT
+        value: "6000"
+      - name: DRILL_DB_HOST
+        value: {{ .Values.config.POSTGRES_DB_HOST }}
+      - name: DRILL_DB_NAME
+        value: {{ .Values.config.POSTGRES_DB }}
+      - name: DRILL_DB_USER_NAME
+        value: {{ .Values.config.POSTGRES_USER }}
+      - name: DRILL_DB_PASSWORD
+        value: {{ .Values.config.POSTGRES_PASSWORD }}
+      - name: DRILL_DB_MAX_POOL_SIZE
+        value: {{ .Values.config.DRILL_ADMIN_BACKEND_DB_MAX_POOL_SIZE }}
+      - name: DRILL_SCHEDULER_REFRESH_VIEWS_INTERVAL_IN_MINUTES
+        value: {{ .Values.config.DRILL_SCHEDULER_REFRESH_VIEWS_INTERVAL_IN_MINUTES }}
+      - name: LOG_LEVEL
+        value: "info"
+    service:
+      name: drill-admin
+      type: ClusterIP
+      port: 8090
+      targetPort: 8090
+
+  ui:
+    name: drill-ui
+    replicaCount: 1
+    image:
+      repository: ghcr.io/drill4j/drill4j-ui
+      tag: "0.1.2"
+    env:
+      - name: API_HOST
+        value: {{ .Values.config.API_HOST }}
+      - name: API_PORT
+        value: "8090"
+      - name: BASE_PATH
+        value: "/ui"
+    service:
+      name: drill-ui
+      type: NodePort
+      port: 8091
+      targetPort: 8080
+
+  metabase:
+    name: metabase
+    replicaCount: 1
+    initContainer:
+      image: ghcr.io/drill4j/drill-metabase-dashboards:0.9.2
+      env:
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.config.POSTGRES_PASSWORD }}
+        - name: POSTGRES_HOST
+          value: {{ .Values.config.POSTGRES_DB_HOST }}
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          value: {{ .Values.config.POSTGRES_USER }}
+        - name: POSTGRES_DB
+          value: {{ .Values.config.POSTGRES_DB }}
+    image:
+      repository: metabase/metabase
+      digest: sha256:96416c11371d400aecc2073b8d0e8335cc7c413b236ef724e51dda095b2580ea
+    env:
+      - name: MB_DB_TYPE
+        value: "postgres"
+      - name: MB_DB_HOST
+        value: {{ .Values.config.POSTGRES_DB_HOST }}
+      - name: MB_DB_PORT
+        value: "5432"
+      - name: MB_DB_USER
+        value: {{ .Values.config.POSTGRES_USER }}
+      - name: MB_DB_PASS
+        value: {{ .Values.config.POSTGRES_PASSWORD }}
+      - name: MB_DB_DBNAME
+        value: {{ .Values.config.POSTGRES_DB }}
+    service:
+      name: metabase
+      type: NodePort
+      port: 8095
+      targetPort: 3000
+    probes:
+      liveness:
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        failureThreshold: 5
+
+ingress:
+  name: app-ingress
+  paths:
+    ui:
+      path: /ui(/|$)(.*)
+    admin:
+      path: /admin(/|$)(.*)
+    metabase:
+      path: /metabase(/|$)(.*)
+
+postgresql:
+  enabled: true

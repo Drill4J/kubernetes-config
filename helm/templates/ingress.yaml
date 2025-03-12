@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.ingress.name | default "app-ingress" }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - path: {{ .Values.ingress.paths.ui.path | default "/ui(/|$)(.*)" }}
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ .Values.deployments.ui.service.name | default "drill-ui" }}
+            port:
+              number: {{ .Values.deployments.ui.service.port }}
+      - path: {{ .Values.ingress.paths.admin.path | default "/admin(/|$)(.*)" }}
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ .Values.deployments.drill-admin.service.name | default "drill-admin" }}
+            port:
+              number: {{ .Values.deployments.drill-admin.service.port }}
+      - path: {{ .Values.ingress.paths.metabase.path | default "/metabase(/|$)(.*)" }}
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ .Values.deployments.metabase.service.name | default "metabase" }}
+            port:
+              number: {{ .Values.deployments.metabase.service.port }}

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployments.metabase.service.name | default "metabase" }}
+spec:
+  type: {{ .Values.deployments.metabase.service.type | default "NodePort" }}
+  selector:
+    app: metabase
+  ports:
+    - port: {{ .Values.deployments.metabase.service.port }}
+      targetPort: {{ .Values.deployments.metabase.service.targetPort }}

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployments.ui.name | default "drill-ui" }}
+  labels:
+    app: drill-ui
+spec:
+  replicas: {{ .Values.deployments.ui.replicaCount }}
+  selector:
+    matchLabels:
+      app: drill-ui
+  template:
+    metadata:
+      labels:
+        app: drill-ui
+    spec:
+      containers:
+        - name: {{ .Values.deployments.ui.containerName | default "drill-ui" }}
+          image: {{ .Values.deployments.ui.image.repository }}:{{ .Values.deployments.ui.image.tag }}
+          env:
+            - name: API_HOST
+              value: {{ .Values.config.API_HOST }}
+            - name: API_PORT
+              value: "8090"
+            - name: BASE_PATH
+              value: "/ui"
+          ports:
+            - containerPort: {{ .Values.deployments.ui.service.targetPort }}
