@@ -16,33 +16,19 @@ spec:
     spec:
       initContainers:
         - name: init-metabase
-          image: {{ .Values.deployments.metabase.initContainer.image | default "ghcr.io/drill4j/drill-metabase-dashboards:0.9.2" }}
+          image: {{ .Values.deployments.metabase.initContainer.image | default "ghcr.io/drill4j/metabase-dashboards:0.9.2" }}
           env:
             {{- range .Values.deployments.metabase.initContainer.env }}
             - name: {{ .name }}
-              {{- if .value }}
-              value: {{ .value }}
-              {{- else }}
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ $.Values.deployments.metabase.configMapName | default "drill-config" }}
-                  key: {{ .key }}
-              {{- end }}
+              value: {{ .value | quote }}
             {{- end }}
       containers:
-        - name: {{ .Values.deployments.metabase.containerName | default "metabase" }}
+        - name: {{ .Values.deployments.metabase.name | default "metabase" }}
           image: {{ .Values.deployments.metabase.image.repository }}@{{ .Values.deployments.metabase.image.digest }}
           env:
             {{- range .Values.deployments.metabase.env }}
             - name: {{ .name }}
-              {{- if .value }}
-              value: {{ .value }}
-              {{- else }}
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ $.Values.deployments.metabase.configMapName | default "drill-config" }}
-                  key: {{ .key }}
-              {{- end }}
+              value: {{ .value | quote }}
             {{- end }}
           ports:
             - containerPort: {{ .Values.deployments.metabase.service.targetPort }}

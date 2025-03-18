@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.deployments.ui.name | default "drill-ui" }}
+  name: {{ .Values.deployments.ui.name | default "ui" }}
   labels:
-    app: drill-ui
+    app: ui
 spec:
   replicas: {{ .Values.deployments.ui.replicaCount }}
   selector:
     matchLabels:
-      app: drill-ui
+      app: ui
   template:
     metadata:
       labels:
-        app: drill-ui
+        app: ui
     spec:
       containers:
-        - name: {{ .Values.deployments.ui.containerName | default "drill-ui" }}
+        - name: {{ .Values.deployments.ui.containerName | default "ui" }}
           image: {{ .Values.deployments.ui.image.repository }}:{{ .Values.deployments.ui.image.tag }}
           env:
             - name: API_HOST

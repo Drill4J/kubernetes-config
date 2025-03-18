@@ -38,7 +38,7 @@ https://github.com/bitnami/charts/tree/main/bitnami/postgresql
 
 ```shell
     helm install my-postgres bitnami/postgresql --set postgresqlVersion=17 \
-    --set global.postgresql.auth.postgresPassword=mysecretpassword \
+    --set global.postgresql.auth.postgresPassword=12345 \
     --set global.postgresql.auth.database=postgres
 ```
 

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: drill-ui
+  name: ui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: drill-ui
+      app: ui
   template:
     metadata:
       labels:
-        app: drill-ui
+        app: ui
     spec:
       containers:
-        - name: drill-ui
+        - name: ui
           image: ghcr.io/drill4j/drill4j-ui:0.1.2
           env:
             - name: API_HOST
@@ -32,11 +32,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: drill-ui
+  name: ui
 spec:
   type: NodePort
   selector:
-    app: drill-ui
+    app: ui
   ports:
     - port: 8091        # Expose port 8091 externally on the node
       targetPort: 8080   # Forward traffic to port 8080 inside the container

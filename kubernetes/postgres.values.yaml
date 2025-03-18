@@ -2,5 +2,5 @@ postgresqlVersion: 17
 global:
   postgresql:
     auth:
-      postgresPassword: mysecretpassword
+      postgresPassword: 12345
       database: postgres

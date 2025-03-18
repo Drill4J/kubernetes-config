@@ -28,3 +28,6 @@ dependencies:
     version: 16.5.0 # corresponds to PostgreSQL 17
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
+    service:
+      type: NodePort
+      nodePort: 5432  # Choose an available port

@@ -1,50 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.deployments.drill-admin.name | default "drill-admin" }}
+  name: {{ .Values.deployments.admin.name | default "admin" }}
   labels:
-    app: drill-admin
+    app: admin
 spec:
-  replicas: {{ .Values.deployments.drill-admin.replicaCount }}
+  replicas: {{ .Values.deployments.admin.replicaCount }}
   selector:
     matchLabels:
-      app: drill-admin
+      app: admin
   template:
     metadata:
       labels:
-        app: drill-admin
+        app: admin
     spec:
       containers:
-        - name: {{ .Values.deployments.drill-admin.containerName | default "drill-admin" }}
-          image: {{ .Values.deployments.drill-admin.image.repository }}:{{ .Values.deployments.drill-admin.image.tag }}
+        - name: {{ .Values.deployments.admin.name | default "admin" }}
+          image: {{ .Values.deployments.admin.image.repository }}:{{ .Values.deployments.admin.image.tag }}
           env:
-            - name: DRILL_METRICS_UI_BASE_URL
-              value: {{ .Values.config.DRILL_UI_BASE_URL }}
-            - name: DRILL_DB_PORT
-              value: "5432"
-            - name: DRILL_AGENTS_SOCKET_TIMEOUT
-              value: "6000"
-            - name: DRILL_DB_HOST
-              value: {{ .Values.config.POSTGRES_DB_HOST }}
-            - name: DRILL_DB_NAME
-              value: {{ .Values.config.POSTGRES_DB }}
-            - name: DRILL_DB_USER_NAME
-              value: {{ .Values.config.POSTGRES_USER }}
-            - name: DRILL_DB_PASSWORD
-              value: {{ .Values.config.POSTGRES_PASSWORD }}
-            - name: DRILL_DB_MAX_POOL_SIZE
-              value: {{ .Values.config.DRILL_ADMIN_BACKEND_DB_MAX_POOL_SIZE }}
-            - name: DRILL_SCHEDULER_REFRESH_VIEWS_INTERVAL_IN_MINUTES
-              value: {{ .Values.config.DRILL_SCHEDULER_REFRESH_VIEWS_INTERVAL_IN_MINUTES }}
-            - name: LOG_LEVEL
-              value: "info"
+            {{- range .Values.deployments.admin.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
           ports:
-            - containerPort: {{ .Values.deployments.drill-admin.service.targetPort }}
-          livenessProbe:
-            httpGet:
-              path: /
-              port: {{ .Values.deployments.drill-admin.service.targetPort }}
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: 30
+            - containerPort: {{ .Values.deployments.admin.service.targetPort }}
