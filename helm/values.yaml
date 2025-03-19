@@ -124,6 +124,14 @@ postgresql:
     password: "12345"
     database: "db-drill"
   
-  persistence:
-    enabled: false 
-    # TODO enable persistence
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+
+    persistentVolumeClaimRetentionPolicy:
+      enabled: true
+  
+  shmVolume:
+    enabled: true
+    sizeLimit: 1Gi # TODO does not work

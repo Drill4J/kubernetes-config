@@ -3,17 +3,17 @@ kind: Ingress
 metadata:
   name: {{ .Values.ingress.name }}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
-    {{- range $key, $value := .Values.ingress.paths }}
     - http:
         paths:
-          - path: {{ $value.path }}
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: {{ $value.service.name }}
-                port:
-                  number: {{ $value.service.port }}
-    {{- end }}
+        {{- range $key, $value := .Values.ingress.paths }}
+        - path: {{ $value.path }}
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: {{ $value.service.name }}
+              port:
+                number: {{ $value.service.port }}
+        {{- end }}
