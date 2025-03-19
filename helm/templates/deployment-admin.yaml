@@ -14,6 +14,11 @@ spec:
       labels:
         app: admin
     spec:
+      initContainers:
+        - name: wait-for-postgresql
+          image: busybox
+          # todo use host from values.yaml
+          command: ['sh', '-c', 'until nc -z drill-postgresql 5432; do sleep 2; done']
       containers:
         - name: {{ .Values.deployments.admin.name | default "admin" }}
           image: {{ .Values.deployments.admin.image.repository }}:{{ .Values.deployments.admin.image.tag }}
