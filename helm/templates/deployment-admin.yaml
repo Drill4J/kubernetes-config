@@ -27,5 +27,16 @@ spec:
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
+            - name: DRILL_DB_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbUsernameKey }}
+            - name: DRILL_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbPasswordKey }}
+
           ports:
             - containerPort: {{ .Values.deployments.admin.service.targetPort }}

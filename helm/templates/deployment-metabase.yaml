@@ -26,6 +26,16 @@ spec:
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
+            - name: POSTGRES_USER 
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbUsernameKey }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbPasswordKey }}
       containers:
         - name: {{ .Values.deployments.metabase.name | default "metabase" }}
           image: {{ .Values.deployments.metabase.image.repository }}@{{ .Values.deployments.metabase.image.digest }}
@@ -34,6 +44,16 @@ spec:
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
+            - name: MB_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbUsernameKey }}
+            - name: MB_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbPasswordKey }}
           ports:
             - containerPort: {{ .Values.deployments.metabase.service.targetPort }}
           livenessProbe:
