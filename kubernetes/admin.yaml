@@ -23,15 +23,11 @@ spec:
                   key: DRILL_UI_BASE_URL
             - name: DRILL_DB_PORT
               value: "5432"
-            - name: DRILL_AGENTS_SOCKET_TIMEOUT
-              value: "6000"
-
             - name: DRILL_DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: drill-config
                   key: POSTGRES_DB_HOST
-                  
             - name: DRILL_DB_NAME
               valueFrom:
                 configMapKeyRef:
