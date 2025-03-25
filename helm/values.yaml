@@ -8,7 +8,7 @@ deployments:
     replicaCount: 1
     image:
       repository: ghcr.io/drill4j/admin
-      tag: "0.9.10"
+      tag: "0.9.11"
     env:
       - name: DRILL_DB_HOST
         value: "drill-postgresql"
@@ -53,7 +53,8 @@ deployments:
     name: metabase
     replicaCount: 1
     initContainer:
-      image: ghcr.io/drill4j/drill-metabase-dashboards:0.9.2
+      image: ghcr.io/drill4j/drill-metabase-dashboards
+      tag: "0.9.3"
       env:
         - name: POSTGRES_HOST
           value: "drill-postgresql"
@@ -63,7 +64,7 @@ deployments:
           value: "db-metabase"
     image:
       repository: metabase/metabase
-      digest: sha256:96416c11371d400aecc2073b8d0e8335cc7c413b236ef724e51dda095b2580ea
+      tag: "v0.53.7.x"
     env:
       - name: MB_DB_TYPE
         value: "postgres"

@@ -48,7 +48,23 @@ __IMPORTANT__: once you are done with this section, make sure to follow [post-de
 
 ### Post-deployment setup for deployment with Helm
 
-> TODO: complete
+1. Navigate to Metabase's Admin Panel, open "General" tab (`/metabase/admin/settings/general`) and set SITE URL to `http://*your host*/metabase` (e.g. `http://localhost/metabase` for local deployment)
+
+2. Navigate to Databases tab (`/metabase/admin/databases`), click on `Drill4J_PostgreSQL_DB` and update the following values:
+
+	```ini
+	# db host
+	drill-postgresql
+	# database name
+	db-drill
+	# port
+	5432
+	# also update username and password
+	```
+
+	Click the "Save changes" button at the bottom of the page
+
+
 
 ## Deployment with Kubernetes configuration files
 
