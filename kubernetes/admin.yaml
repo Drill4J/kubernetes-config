@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: drill-admin
+  name: admin
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: drill-admin
+      app: admin
   template:
     metadata:
       labels:
-        app: drill-admin
+        app: admin
     spec:
       containers:
-        - name: drill-admin
+        - name: admin
           image: ghcr.io/drill4j/admin:0.9.10
           env:
             - name: DRILL_METRICS_UI_BASE_URL
@@ -23,15 +23,11 @@ spec:
                   key: DRILL_UI_BASE_URL
             - name: DRILL_DB_PORT
               value: "5432"
-            - name: DRILL_AGENTS_SOCKET_TIMEOUT
-              value: "6000"
-
             - name: DRILL_DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: drill-config
                   key: POSTGRES_DB_HOST
-                  
             - name: DRILL_DB_NAME
               valueFrom:
                 configMapKeyRef:
@@ -75,11 +71,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: drill-admin-cluster-ip
+  name: admin-cluster-ip
 spec:
   type: ClusterIP
   selector:
-    app: drill-admin
+    app: admin
   ports:
     - port: 8090
       targetPort: 8090
@@ -89,11 +85,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: drill-admin-node-port
+  name: admin-node-port
 spec:
   type: NodePort
   selector:
-    app: drill-admin
+    app: admin
   ports:
     - port: 8090
       targetPort: 8090

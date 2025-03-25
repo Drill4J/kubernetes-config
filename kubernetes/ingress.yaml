@@ -12,14 +12,14 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: drill-ui
+            name: ui
             port:
               number: 8091
       - path: /admin(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
           service:
-            name: drill-admin-node-port
+            name: admin-node-port
             port:
               number: 8090
       - path: /metabase(/|$)(.*)

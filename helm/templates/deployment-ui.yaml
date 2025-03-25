@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployments.ui.name | default "ui" }}
+  labels:
+    app: ui
+spec:
+  replicas: {{ .Values.deployments.ui.replicaCount }}
+  selector:
+    matchLabels:
+      app: ui
+  template:
+    metadata:
+      labels:
+        app: ui
+    spec:
+      initContainers:
+        - name: wait-for-admin-api
+          image: busybox
+          # todo use host from values.yaml
+          command: ['sh', '-c', 'until nc -z admin.default.svc.cluster.local 8090; do sleep 2; done']
+      containers:
+        - name: {{ .Values.deployments.ui.containerName | default "ui" }}
+          image: {{ .Values.deployments.ui.image.repository }}:{{ .Values.deployments.ui.image.tag }}
+          env:
+            - name: API_HOST
+              value: {{ .Values.config.API_HOST }}
+            - name: API_PORT
+              value: "8090"
+            - name: BASE_PATH
+              value: "/ui"
+          ports:
+            - containerPort: {{ .Values.deployments.ui.service.targetPort }}

@@ -14,10 +14,10 @@ spec:
     spec:
       initContainers:
         - name: init-metabase
-          image: ghcr.io/drill4j/drill-metabase-dashboards:0.9.2
+          image: ghcr.io/drill4j/metabase-dashboards:0.9.2
           env:
             - name: POSTGRES_PASSWORD
-              value: mysecretpassword
+              value: 12345
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
@@ -45,7 +45,7 @@ spec:
             - name: MB_DB_USER
               value: postgres
             - name: MB_DB_PASS
-              value: mysecretpassword
+              value: 12345
             - name: MB_DB_DBNAME
               value: db-metabase
           ports:

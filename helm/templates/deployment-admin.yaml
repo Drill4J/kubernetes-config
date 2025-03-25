@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployments.admin.name | default "admin" }}
+  labels:
+    app: admin
+spec:
+  replicas: {{ .Values.deployments.admin.replicaCount }}
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+    spec:
+      initContainers:
+        - name: wait-for-postgresql
+          image: busybox
+          # todo use host from values.yaml
+          command: ['sh', '-c', 'until nc -z drill-postgresql 5432; do sleep 2; done']
+      containers:
+        - name: {{ .Values.deployments.admin.name | default "admin" }}
+          image: {{ .Values.deployments.admin.image.repository }}:{{ .Values.deployments.admin.image.tag }}
+          env:
+            {{- range .Values.deployments.admin.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            - name: DRILL_DB_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbUsernameKey }}
+            - name: DRILL_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbPasswordKey }}
+
+          ports:
+            - containerPort: {{ .Values.deployments.admin.service.targetPort }}

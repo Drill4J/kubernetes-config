@@ -113,7 +113,7 @@ metadata:
 data:
   ACCESS_CONTROL_ALLOW_ORIGIN: "*"
   JAVA_TOOL_OPTIONS: "-agentpath:/data/agent/libdrill_agent.so"
-  DRILL_ADMIN_ADDRESS: "http://drill-admin-cluster-ip.default.svc.cluster.local:8090/api"
+  DRILL_ADMIN_ADDRESS: "http://admin-cluster-ip.default.svc.cluster.local:8090/api"
   DRILL_API_KEY: "1_33b7bad7f3cf719db2f99be59dfa34f9123d942e7018294d65196d68a0877eed"
   DRILL_APP_ID: "backend"
   DRILL_GROUP_ID: "realworld"

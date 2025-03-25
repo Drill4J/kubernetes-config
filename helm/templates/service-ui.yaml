@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployments.ui.service.name | default "ui" }}
+spec:
+  type: {{ .Values.deployments.ui.service.type | default "NodePort" }}
+  selector:
+    app: ui
+  ports:
+    - port: {{ .Values.deployments.ui.service.port }}
+      targetPort: {{ .Values.deployments.ui.service.targetPort }}

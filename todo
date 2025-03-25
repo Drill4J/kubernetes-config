@@ -1,0 +1,23 @@
++1. Ingress
+?2. Configure persistence volume
+3. shm_size
+4. Secrets
+5. Move to config-map
+    db-drill
+    db-metabase
+    hostnames
+6. Maviews refresh time to 30 minutes
+7. adjust resource allocation for containers
+
+Metabase configure instructions
+1. Adjust root path
+	localhost/metabase
+2. Adjust DB settings
+	host
+	drill-postgresql
+	
+	name
+	db-drill
+	
+	password
+	12345

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployments.metabase.name | default "metabase" }}
+  labels:
+    app: metabase
+spec:
+  replicas: {{ .Values.deployments.metabase.replicaCount }}
+  selector:
+    matchLabels:
+      app: metabase
+  template:
+    metadata:
+      labels:
+        app: metabase
+    spec:
+      initContainers:
+        - name: wait-for-postgresql
+          image: busybox
+          # todo use host from values.yaml
+          command: ['sh', '-c', 'until nc -z drill-postgresql 5432; do sleep 2; done']
+        - name: init-metabase
+          image: {{ .Values.deployments.metabase.initContainer.image | default "ghcr.io/drill4j/metabase-dashboards:0.9.2" }}
+          env:
+            {{- range .Values.deployments.metabase.initContainer.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            - name: POSTGRES_USER 
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbUsernameKey }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbPasswordKey }}
+      containers:
+        - name: {{ .Values.deployments.metabase.name | default "metabase" }}
+          image: {{ .Values.deployments.metabase.image.repository }}@{{ .Values.deployments.metabase.image.digest }}
+          env:
+            {{- range .Values.deployments.metabase.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            - name: MB_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbUsernameKey }}
+            - name: MB_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.dbSecret }}
+                  key: {{ .Values.secrets.dbPasswordKey }}
+          ports:
+            - containerPort: {{ .Values.deployments.metabase.service.targetPort }}
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.deployments.metabase.service.targetPort }}
+            initialDelaySeconds: {{ .Values.deployments.metabase.probes.liveness.initialDelaySeconds | default 15 }}
+            periodSeconds: {{ .Values.deployments.metabase.probes.liveness.periodSeconds | default 15 }}
+            timeoutSeconds: {{ .Values.deployments.metabase.probes.liveness.timeoutSeconds | default 5 }}
+            failureThreshold: {{ .Values.deployments.metabase.probes.liveness.failureThreshold | default 5 }}
