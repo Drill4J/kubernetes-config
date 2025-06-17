@@ -20,6 +20,7 @@ spec:
       labels:
         app: realworld-api
     spec:
+      # Init Container to Download and Extract Java Agent
       initContainers:
         - name: init-file-downloader
           image: alpine
@@ -36,17 +37,20 @@ spec:
           volumeMounts:
             - name: agent-files
               mountPath: /data
+      # Example Application Container
       containers:
         - name: realworld-api
           image: drill4j/real-world-spring-api:java-and-js-coverage-0.1.0
           ports:
             - containerPort: 9001
+          args: ["java", "-jar", "/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar"]
           env:
             - name: ACCESS_CONTROL_ALLOW_ORIGIN
               valueFrom:
                 configMapKeyRef:
                   name: realworld-config
                   key: ACCESS_CONTROL_ALLOW_ORIGIN
+            # Necessary environment variables for Drill4J
             - name: JAVA_TOOL_OPTIONS
               valueFrom:
                 configMapKeyRef:
@@ -72,13 +76,18 @@ spec:
                 configMapKeyRef:
                   name: realworld-config
                   key: DRILL_GROUP_ID
+            # Application-specific environment variables
+            # DRILL_BUILD_VERSIONS specifies App Under Test version
+            # Must be unique for each application build
             - name: DRILL_BUILD_VERSION
               value: "0.1.0"
+            # DRILL_PACKAGE_PREFIXES specifies the prefix of packages to be monitored
             - name: DRILL_PACKAGE_PREFIXES
               value: "io/spring"
+            # DRILL_ENV_ID is used to identify the environment, e.g. "dev", "staging", etc 
             - name: DRILL_ENV_ID
               value: "demo-1"
-          args: ["java", "-jar", "/spring-boot-realworld-example-app-0.0.1-SNAPSHOT.jar"]
+      # Volume necessary for Java Agent to be downloaded and mounted
           volumeMounts:
             - name: agent-files
               mountPath: /data
@@ -113,7 +122,11 @@ metadata:
 data:
   ACCESS_CONTROL_ALLOW_ORIGIN: "*"
   JAVA_TOOL_OPTIONS: "-agentpath:/data/agent/libdrill_agent.so"
+  # Adjust to match your Drill4J Admin Cluster IP or external URL if applicable 
   DRILL_ADMIN_ADDRESS: "http://admin-cluster-ip.default.svc.cluster.local:8090/api"
-  DRILL_API_KEY: "1_33b7bad7f3cf719db2f99be59dfa34f9123d942e7018294d65196d68a0877eed"
-  DRILL_APP_ID: "backend"
+  # Only for demonstration purposes, replace with your actual Drill4J API URL pulled from secrets
+  DRILL_API_KEY: "1_271ec74e2afd1482b851fed0858c3c4a5dcff64bda09580cf47988940641f521"
+  # Adjust to match application name
   DRILL_GROUP_ID: "realworld"
+  # Adjust to match service name
+  DRILL_APP_ID: "backend"
