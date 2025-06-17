@@ -38,7 +38,7 @@ spec:
                   key: {{ .Values.secrets.dbPasswordKey }}
       containers:
         - name: {{ .Values.deployments.metabase.name | default "metabase" }}
-          image: {{ .Values.deployments.metabase.image.repository }}@{{ .Values.deployments.metabase.image.digest }}
+          image: {{ .Values.deployments.metabase.image.repository }}:{{ .Values.deployments.metabase.image.tag }}
           env:
             {{- range .Values.deployments.metabase.env }}
             - name: {{ .name }}

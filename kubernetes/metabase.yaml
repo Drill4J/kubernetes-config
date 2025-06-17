@@ -31,7 +31,7 @@ spec:
               value: db-metabase
       containers:
         - name: metabase
-          image: metabase/metabase@sha256:96416c11371d400aecc2073b8d0e8335cc7c413b236ef724e51dda095b2580ea
+          image: metabase/metabase:v0.53.7.x
           env:
             - name: MB_DB_TYPE
               value: "postgres"
