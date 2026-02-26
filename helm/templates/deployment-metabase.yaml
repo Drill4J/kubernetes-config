@@ -20,7 +20,7 @@ spec:
           # todo use host from values.yaml
           command: ['sh', '-c', 'until nc -z drill-postgresql 5432; do sleep 2; done']
         - name: init-metabase
-          image: {{ .Values.deployments.metabase.initContainer.image | default "ghcr.io/drill4j/metabase-dashboards:0.9.2" }}
+          image: {{ .Values.deployments.metabase.initContainer.image }}:{{ .Values.deployments.metabase.initContainer.tag }}
           env:
             {{- range .Values.deployments.metabase.initContainer.env }}
             - name: {{ .name }}
